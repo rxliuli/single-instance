@@ -57,17 +57,21 @@ export function App() {
     })
   }
 
+  // Sizes are tuned for a desktop popup. On a touch screen the popup is a
+  // full-width sheet, where the same sizes read as too small.
   return (
-    <div className="min-w-80 space-y-3 p-4">
+    <div className="min-w-80 space-y-3 p-4 text-sm pointer-coarse:text-base">
       {sitePattern ? (
         <>
-          <div className="truncate text-sm font-medium" title={url ?? ''}>
+          <div className="truncate font-medium" title={url ?? ''}>
             {new URL(url!).hostname}
           </div>
           <div className="flex items-start justify-between gap-3">
             <div className="space-y-1">
-              <Label htmlFor="single">Keep this site in one tab</Label>
-              <p className="text-muted-foreground text-xs">
+              <Label htmlFor="single" className="pointer-coarse:text-base">
+                Keep this site in one tab
+              </Label>
+              <p className="text-muted-foreground text-xs pointer-coarse:text-sm">
                 {rule && rule.enabled && hasAccess === false
                   ? 'Access to this site was removed. Turn the switch on again to restore it.'
                   : 'Links to this site open in the tab you already have.'}
@@ -77,13 +81,13 @@ export function App() {
           </div>
         </>
       ) : (
-        <p className="text-muted-foreground text-sm">
+        <p className="text-muted-foreground">
           This page can't be kept in a single tab.
         </p>
       )}
       <Button
         variant="link"
-        className="h-auto p-0 text-xs"
+        className="h-auto p-0 text-xs pointer-coarse:text-sm"
         onClick={() => void browser.runtime.openOptionsPage()}
       >
         Manage all rules

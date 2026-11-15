@@ -1,0 +1,2 @@
+minimumReleaseAgeExclude:
+  - '@extport/wxt@0.0.13'
