@@ -2,7 +2,7 @@
   "name": "single-instance",
   "description": "Keep each site you choose in a single tab by opening its links in the tab you already have.",
   "private": true,
-  "version": "0.0.0",
+  "version": "0.0.1",
   "type": "module",
   "scripts": {
     "dev": "wxt",

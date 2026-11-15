@@ -14,6 +14,7 @@ export default defineConfig({
       developmentTeam: 'N2X78TUUFG',
       issuerId: '48f39427-c063-4e33-98d2-31de80aad0be',
       keyId: '8N27UWG9RG',
+      openProject: true,
     },
   },
   vite: () => ({
@@ -67,6 +68,9 @@ export default defineConfig({
       // https://developer.mozilla.org/en-US/docs/Mozilla/Add-ons/WebExtensions/manifest.json/author
       // @ts-expect-error
       manifest.author = 'rxliuli'
+    }
+    if (env.browser === 'safari') {
+      manifest.name = 'Single Instance'
     }
     return manifest
   },
