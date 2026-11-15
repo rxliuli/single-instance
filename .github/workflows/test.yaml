@@ -9,7 +9,9 @@ on:
 
 jobs:
   test:
-    runs-on: ubuntu-latest
+    # Pinned: Playwright had no Chromium build for the image behind
+    # ubuntu-latest.
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v5
       - uses: pnpm/action-setup@v6

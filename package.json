@@ -15,7 +15,7 @@
     "compile": "tsc --noEmit",
     "postinstall": "wxt prepare",
     "build:e2e": "wxt build --mode e2e",
-    "test": "is-ci && pnpm exec playwright install || echo 'Not in CI' && vitest run",
+    "test": "is-ci && pnpm exec playwright install --with-deps chromium || echo 'Not in CI' && vitest run",
     "test:unit": "vitest run --project unit",
     "test:e2e": "vitest run --project e2e",
     "init-project": "vite-node lib/build/init.ts"
@@ -57,5 +57,6 @@
     "overrides": {
       "wxt>vite": "^8.0.0"
     }
-  }
+  },
+  "packageManager": "pnpm@12.15.0"
 }
