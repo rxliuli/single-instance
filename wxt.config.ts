@@ -1,21 +1,20 @@
-import { defineConfig, UserManifest } from 'wxt'
+import { defineConfig, type UserManifest } from 'wxt'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineConfig({
   modules: ['@wxt-dev/module-react', '@extport/wxt'],
   extport: {
-    extension: 'ext_YOUR_EXTENSION_ID',
-    // Daily anonymous usage ping + the Firefox data-collection declaration,
-    // injected by @extport/wxt. Opt-in; fill the store data-disclosure forms
-    // before shipping it: https://github.com/rxliuli/extport/blob/main/docs/analytics-design.md
-    // analytics: true,
+    extension: 'ext_nd0ncREOnwkvbKMRzRtD',
+    analytics: true,
     // Publishing to Safari? Uncomment and fill in your own values —
     // extport.config.json is generated from these at `wxt prepare`.
-    // safari: {
-    //   appCategory: 'public.app-category.productivity',
-    //   bundleIdentifier: 'com.example.your-extension',
-    //   developmentTeam: 'YOUR_TEAM_ID',
-    // },
+    safari: {
+      appCategory: 'public.app-category.productivity',
+      bundleIdentifier: 'com.rxliuli.single-instance',
+      developmentTeam: 'N2X78TUUFG',
+      issuerId: '48f39427-c063-4e33-98d2-31de80aad0be',
+      keyId: '8N27UWG9RG',
+    },
   },
   vite: () => ({
     plugins: [tailwindcss()],
@@ -26,11 +25,13 @@ export default defineConfig({
   manifestVersion: 3,
   manifest: (env) => {
     const manifest: UserManifest = {
-      name: 'Browser Extension Template',
+      name: 'Single Instance – Open links in existing tab',
       description:
-        'A template for WXT, a WebExtension framework based on Vite and React',
-      permissions: ['storage'],
-      host_permissions: ['<all_urls>'],
+        'Keep each site you choose in a single tab by opening its links in the tab you already have.',
+      // No `tabs`, `webNavigation` or `scripting`: site access is requested
+      // per rule, so installing shows no permission warning.
+      permissions: ['storage', 'activeTab'],
+      optional_host_permissions: ['https://*/*', 'http://*/*'],
       author: {
         email: 'rxliuli@gmail.com',
       },
@@ -43,14 +44,17 @@ export default defineConfig({
           '128': 'icon/128.png',
         },
       },
-      homepage_url: 'https://rxliuli.com/project/browser-extension-template',
+      homepage_url: 'https://rxliuli.com/project/single-instance',
+    }
+    if (env.mode === 'e2e') {
+      // Tests cannot click the permission prompt, so the test build
+      // (`wxt build --mode e2e`) is granted every site up front.
+      manifest.host_permissions = ['<all_urls>']
     }
     if (env.browser === 'firefox') {
       manifest.browser_specific_settings = {
         gecko: {
-          id:
-            manifest.name!.toLowerCase().replaceAll(/[^a-z0-9]/g, '-') +
-            '@rxliuli.com',
+          id: 'single-instance@rxliuli.com',
           data_collection_permissions: {
             required: ['none'],
           },

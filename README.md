@@ -1,60 +1,49 @@
-# Browser Extension Template
+# Single Instance
 
-A modern browser extension development template built with React, Shadcn/ui, and WXT. Supports building cross-browser extensions compatible with Chrome, Edge, Firefox, and Safari (requires macOS).
+Keep each site you choose in a single tab. When a link to that site is opened from somewhere else, it opens in the tab you already have and the new tab is closed.
 
-## Getting Started
+Built for web apps that misbehave with a second tab: Discord asking you to log in again, WhatsApp Web's single session, heavy apps such as Slack or Figma, music sites playing twice.
 
-### Initialize Project
+## How it works
 
-```sh
-git clone https://github.com/<your-github-username>/<your-project-name>.git
-cd <your-project-name>
-pnpm i
-pnpm init-project
-```
+- Open a site, click the toolbar button, and turn on "Keep this site in one tab". Or add sites on the options page.
+- Each rule is a [match pattern](https://developer.chrome.com/docs/extensions/develop/concepts/match-patterns) such as `https://discord.com/*`.
+- Only a new tab's first navigation is ever intercepted. Tabs opened from the site itself (Ctrl/Cmd+click, middle click) and popup windows (OAuth) are left alone.
 
-Follow the prompts to enter your project name and complete the initialization.
+## Permissions
+
+Installing shows no permission warning. The extension asks for `storage` and `activeTab` only, and requests access to a site when you add a rule for it. It never asks for `tabs`, `webNavigation` or `scripting`, and it has no content scripts, so it cannot read page content and cannot see tabs on sites without a rule.
 
 ## Development
 
-Chrome is used as the baseline version for development. Edge, Firefox, and Safari builds are only created when needed for publishing, testing, or debugging platform-specific issues.
-
-### Start Development Server
-
 ```sh
-pnpm dev
+pnpm i
+pnpm dev          # Chrome, output in .output/chrome-mv3-dev
+pnpm compile      # type check
+pnpm test:unit    # pure logic and storage
+pnpm test:e2e     # real Chromium with the extension loaded
 ```
 
-After running the development server:
+The end-to-end tests build a test variant (`pnpm build:e2e`) that is granted every site in its manifest, because a test cannot click the browser's permission prompt. They need Playwright's Chromium: `pnpm exec playwright install chromium`.
 
-1. Navigate to the `*.output/chrome-mv3-dev` directory to find the compiled extension files
-2. Open `chrome://extensions` in Chrome
-3. Enable "Developer mode"
-4. Drag and drop the output directory to load the extension for debugging
+```
+entrypoints/
+  background.ts     event listeners, interception and merging
+  popup/            switch for the current site
+  options/          rule list
+lib/
+  match.ts          match pattern parsing and matching (pure)
+  pick-target.ts    choosing the tab to merge into (pure)
+  rules.ts          rule storage and migration
+  permissions.ts    requesting and releasing site access
+tests/
+  unit/
+  e2e/
+```
 
-## Build & Package
-
-### Chrome, Edge, and Firefox
-
-Generate production builds and create zip files for distribution:
+## Build
 
 ```sh
 pnpm zip && pnpm zip:firefox
+pnpm build:safari   # macOS with Xcode
 ```
-
-### Safari
-
-Safari extension requires macOS environment and Xcode for building and publishing.
-
-#### Build Steps
-
-1. Update `developmentTeam` in `wxt.config.ts` with your Apple Developer Team ID
-2. Run `pnpm build:safari` - this will automatically build and open Xcode
-3. Build the project in Xcode and test in Safari
-4. To publish: In Xcode, select **Product → Archive** to submit to the App Store
-
-## Requirements
-
-- Node.js (latest LTS recommended)
-- pnpm package manager
-- macOS with Xcode (for Safari development only)
